@@ -4,31 +4,23 @@ cd /d "%~dp0"
 
 git add -A
 git diff --cached --quiet
-if not errorlevel 1 (
-  echo Nothing to commit - working tree clean.
-  goto :done
-)
-
-if "%~1"=="" (
-  set "MSG=Update site"
+if errorlevel 1 (
+  if "%~1"=="" (
+    git commit -m "Update site"
+  ) else (
+    git commit -m "%*"
+  )
+  if errorlevel 1 echo Commit failed - check messages above.
 ) else (
-  set "MSG=%*"
-)
-
-git commit -m "%MSG%"
-if errorlevel 1 (
-  echo Commit failed.
-  goto :done
-)
-
-git push
-if errorlevel 1 (
-  echo Push failed.
-  goto :done
+  echo Nothing new to commit - pushing anyway in case a previous push failed.
 )
 
 echo.
-echo Done - Cloudflare should rebuild shortly.
+git push
+if errorlevel 1 (
+  echo Push failed.
+) else (
+  echo Push OK - Cloudflare will rebuild if new commits reached GitHub.
+)
 
-:done
 pause
