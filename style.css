@@ -1,0 +1,52 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f0f12;
+    color: #e6e6e6;
+    line-height: 1.6;
+  }
+  
+  header.hero {
+    padding: 80px 20px;
+    text-align: center;
+    background: #15151a;
+  }
+  
+  header.hero h1 {
+    font-size: 48px;
+    margin: 0;
+    letter-spacing: 2px;
+  }
+  
+  header.hero p {
+    margin-top: 10px;
+    opacity: 0.8;
+  }
+  
+  section {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 0 20px;
+  }
+  
+  .intro p {
+    margin-bottom: 15px;
+  }
+  
+  .humor {
+    opacity: 0.7;
+    font-style: italic;
+  }
+  
+  .cta {
+    background: #15151a;
+    padding: 40px 20px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    opacity: 0.5;
+  }
