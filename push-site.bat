@@ -42,6 +42,36 @@ REM ============================================================================
 setlocal
 cd /d "%~dp0"
 
+echo.
+echo ===============================================================================
+echo  Llamatech site - push to GitHub ^(same info is in REM comments at top of this file^)
+echo ===============================================================================
+echo  USAGE: double-click this file, or: push-site.bat   OR   push-site.bat Your message here
+echo.
+echo  GITHUB   user: llamatech-unity     repo: llamatech-site
+echo           https://github.com/llamatech-unity/llamatech-site.git
+echo.
+echo  PASSWORD PROMPT: GitHub does NOT use your login password for git push.
+echo           Paste a PERSONAL ACCESS TOKEN as the password.
+echo           Username: llamatech-unity
+echo.
+echo  TOKEN ^(log in as llamatech-unity^): GitHub - Profile - Settings
+echo           - Developer settings - Personal access tokens - Fine-grained tokens
+echo           - Resource owner: llamatech-unity
+echo           - Repository access: llamatech-site
+echo           - Permission Contents: Read and write
+echo           Classic token: enable the full repo scope - also works.
+echo.
+echo  403 / wrong login: Win - Credential Manager - Windows Credentials
+echo           - remove "git:https://github.com" - run this script again.
+echo.
+echo  PARTNER on their own GitHub: add Collaborator with Write on llamatech-site;
+echo           they create their own token ^(Contents read/write on this repo^).
+echo.
+echo  LIVE: branch main - Cloudflare Pages rebuilds after a successful push.
+echo ===============================================================================
+echo.
+
 git add -A
 git diff --cached --quiet
 if errorlevel 1 (
