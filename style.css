@@ -44,6 +44,40 @@ body {
     border-radius: 10px;
     text-align: center;
   }
+
+  .cta-discord-note {
+    margin: 28px 0 16px;
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+
+  .btn-discord {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 22px;
+    background: #5865f2;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-discord:hover {
+    background: #4752c4;
+    transform: translateY(-1px);
+  }
+
+  .btn-discord:focus-visible {
+    outline: 2px solid #a5b4fc;
+    outline-offset: 3px;
+  }
+
+  .btn-discord-icon {
+    flex-shrink: 0;
+  }
   
   footer {
     text-align: center;
