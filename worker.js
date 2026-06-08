@@ -13,13 +13,11 @@ export default {
       const asset = await env.ASSETS.fetch(request);
       if (!asset.ok) return asset;
 
-      return new Response(asset.body, {
+      return new Response(asset.body.pipeThrough(new DecompressionStream("gzip")), {
         status: asset.status,
         headers: {
           "Content-Type": gzipContentType(path),
-          "Content-Encoding": "gzip",
         },
-        encodeBody: "manual",
       });
     }
 
