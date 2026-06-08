@@ -1,0 +1,8 @@
+worker.js
+wrangler.jsonc
+wrangler.toml
+serve.js
+push-site.bat
+.git
+.gitignore
+.assetsignore
