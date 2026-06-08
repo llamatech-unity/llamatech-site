@@ -1,11 +1,11 @@
-/demo/Build/demo.framework.js.br
+/demo/Build/demo.framework.js.gz
   Content-Type: application/javascript
-  Content-Encoding: br
+  Content-Encoding: gzip
 
-/demo/Build/demo.wasm.br
+/demo/Build/demo.wasm.gz
   Content-Type: application/wasm
-  Content-Encoding: br
+  Content-Encoding: gzip
 
-/demo/Build/demo.data.br
+/demo/Build/demo.data.gz
   Content-Type: application/octet-stream
-  Content-Encoding: br
+  Content-Encoding: gzip
