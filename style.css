@@ -210,6 +210,15 @@
     );
   }
 
+  .unity-frame-overlay {
+    position: absolute;
+    inset: 50px;
+    z-index: 3;
+    pointer-events: none;
+    border-radius: 25px;
+    border: 2px dashed #000;
+  }
+
   .unity-focus-gate {
     position: absolute;
     inset: 0;
@@ -218,7 +227,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
     margin: 0;
     padding: 20px;
     border: none;
@@ -239,15 +247,28 @@
     pointer-events: none;
   }
 
-  .unity-focus-prompt {
-    font-size: clamp(1rem, 2.5vw, 1.25rem);
-    font-weight: 600;
-    color: var(--text);
+  .unity-exit-hint {
+    position: absolute;
+    top: 30px;
+    left: 50px;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(calc(-50% - 10px));
+    transition: opacity 0.25s ease, visibility 0.25s ease;
   }
 
-  .unity-focus-hint {
-    font-size: 0.85rem;
-    color: var(--text-muted);
+  .unity-demo-wrap.is-focused .unity-exit-hint {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .unity-focus-label {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.02em;
   }
 
   footer {

@@ -31,32 +31,14 @@ body {
 }
 
 #unity-loading-bar {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: none;
+  display: none !important;
+  visibility: hidden;
 }
 
-#unity-logo {
-  width: 154px;
-  height: 130px;
-  background: url("unity-logo-light.png") no-repeat center;
-}
-
-#unity-progress-bar-empty {
-  width: 141px;
-  height: 18px;
-  margin-top: 10px;
-  margin-left: 6.5px;
-  background: url("progress-bar-empty-light.png") no-repeat center;
-}
-
+#unity-logo,
+#unity-progress-bar-empty,
 #unity-progress-bar-full {
-  width: 0%;
-  height: 18px;
-  margin-top: 10px;
-  background: url("progress-bar-full-light.png") no-repeat center;
+  display: none;
 }
 
 #unity-footer {
