@@ -265,7 +265,7 @@
   }
 
   .unity-focus-label {
-    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-size: clamp(1rem, 2vw, 1.5rem);
     font-weight: 600;
     color: var(--text);
     letter-spacing: 0.02em;
