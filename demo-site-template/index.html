@@ -90,6 +90,20 @@
         });
       };
       document.body.appendChild(script);
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          window.parent.postMessage("unity-unfocus", "*");
+        }
+      });
+
+      document.addEventListener("mousedown", function (e) {
+        if (e.button === 1) e.preventDefault();
+      }, true);
+
+      document.addEventListener("auxclick", function (e) {
+        e.preventDefault();
+      }, true);
     </script>
   </body>
 </html>

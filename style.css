@@ -174,8 +174,9 @@
 
   .unity-demo-wrap {
     position: relative;
-    left: 25px;
-    width: calc(100vw - 50px);
+    -left: 25px;
+    -width: calc(100vw - 50px);
+    width: 100%;
     aspect-ratio: 960 / 600;
     background: var(--page-bg);
     overflow: hidden;
@@ -188,6 +189,11 @@
     height: 100%;
     border: none;
     background: var(--page-bg);
+    pointer-events: none;
+  }
+
+  .unity-demo-wrap.is-focused .unity-iframe {
+    pointer-events: auto;
   }
 
   .unity-vignette {
@@ -199,9 +205,49 @@
       to bottom,
       var(--page-bg) 0%,
       transparent 14%,
-      transparent 86%,
+      transparent 100%,
       var(--page-bg) 100%
     );
+  }
+
+  .unity-focus-gate {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0;
+    padding: 20px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    background: rgba(255, 255, 255, 0.55);
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+
+  .unity-focus-gate:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: -6px;
+  }
+
+  .unity-demo-wrap.is-focused .unity-focus-gate {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .unity-focus-prompt {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .unity-focus-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
   }
 
   footer {

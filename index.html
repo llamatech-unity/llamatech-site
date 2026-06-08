@@ -54,26 +54,82 @@
   </section>
 
   <section class="unity-demo">
-    <div class="unity-demo-header">
+    <!--<div class="unity-demo-header">
       <h2>Interactive Demo</h2>
       <p class="unity-demo-lead">Explore Llamatech vehicles directly in your browser.</p>
-    </div>
-    <div class="unity-demo-wrap">
+    </div>-->
+    <div class="unity-demo-wrap" id="unity-demo-wrap">
       <iframe
+        id="unity-iframe"
         class="unity-iframe"
         src="demo/index.html"
         title="Llamatech interactive demo"
         allowfullscreen
-        loading="lazy"></iframe>
+        loading="lazy"
+        tabindex="-1"></iframe>
       <div class="unity-vignette" aria-hidden="true"></div>
+      <button type="button" class="unity-focus-gate" id="unity-focus-gate" aria-label="Click to interact with demo">
+        <span class="unity-focus-prompt">Click to interact</span>
+        <span class="unity-focus-hint">Press Esc to release focus</span>
+      </button>
     </div>
   </section>
 
-  <footer>
+  <!--<footer>
     <p class="footer-copy">© Llamatech</p>
     <p class="footer-email">
       <a href="mailto:llamatech_unity@outlook.com">llamatech_unity@outlook.com</a>
     </p>
-  </footer>
+  </footer>-->
+
+  <script>
+    (function () {
+      var wrap = document.getElementById("unity-demo-wrap");
+      var iframe = document.getElementById("unity-iframe");
+      var gate = document.getElementById("unity-focus-gate");
+
+      function focusDemo() {
+        wrap.classList.add("is-focused");
+        iframe.focus();
+      }
+
+      function unfocusDemo() {
+        wrap.classList.remove("is-focused");
+        iframe.blur();
+        gate.focus();
+      }
+
+      gate.addEventListener("click", focusDemo);
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && wrap.classList.contains("is-focused")) {
+          unfocusDemo();
+        }
+      });
+
+      window.addEventListener("scroll", function () {
+        if (wrap.classList.contains("is-focused")) {
+          unfocusDemo();
+        }
+      }, { passive: true });
+
+      function blockMiddleMouse(e) {
+        if (!wrap.classList.contains("is-focused")) return;
+        if (e.button === 1) e.preventDefault();
+      }
+
+      document.addEventListener("mousedown", blockMiddleMouse, true);
+      document.addEventListener("mouseup", blockMiddleMouse, true);
+      document.addEventListener("auxclick", function (e) {
+        if (wrap.classList.contains("is-focused")) e.preventDefault();
+      }, true);
+
+      window.addEventListener("message", function (e) {
+        if (e.data === "unity-unfocus") {
+          unfocusDemo();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
