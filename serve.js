@@ -6,11 +6,23 @@ const zlib = require("zlib");
 const PORT = 444;
 const ROOT = __dirname;
 
-const GZIP_ALIASES = {
-  "/demo/Build/demo.framework.js": "/demo/Build/demo.framework.js.gz",
-  "/demo/Build/demo.wasm": "/demo/Build/demo.wasm.gz",
-  "/demo/Build/demo.data": "/demo/Build/demo.data.gz",
-};
+const UNITY_ASSETS = [
+  {
+    url: "/demo/Build/demo.framework.js",
+    gz: "/demo/Build/demo.framework.js.gz",
+    type: "application/javascript",
+  },
+  {
+    url: "/demo/Build/demo.wasm",
+    gz: "/demo/Build/demo.wasm.gz",
+    type: "application/wasm",
+  },
+  {
+    url: "/demo/Build/demo.data",
+    gz: "/demo/Build/demo.data.gz",
+    type: "application/octet-stream",
+  },
+];
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -24,25 +36,71 @@ const MIME = {
   ".data": "application/octet-stream",
 };
 
-function contentType(requestPath) {
-  if (requestPath.endsWith(".framework.js")) return "application/javascript";
-  if (requestPath.endsWith(".wasm")) return "application/wasm";
-  if (requestPath.endsWith(".data")) return "application/octet-stream";
-  return MIME[path.extname(requestPath)] || "application/octet-stream";
+function resolvePath(urlPath) {
+  return path.normalize(path.join(ROOT, urlPath.replace(/^\/+/, "")));
 }
 
-function resolvePath(urlPath) {
-  const relative = urlPath.replace(/^\/+/, "");
-  return path.normalize(path.join(ROOT, relative));
+function contentType(urlPath) {
+  const asset = UNITY_ASSETS.find((entry) => entry.url === urlPath);
+  if (asset) return asset.type;
+  return MIME[path.extname(urlPath)] || "application/octet-stream";
+}
+
+function serveUnityAsset(urlPath, res) {
+  const asset = UNITY_ASSETS.find((entry) => entry.url === urlPath);
+  if (!asset) return false;
+
+  const plainPath = resolvePath(asset.url);
+  const gzPath = resolvePath(asset.gz);
+
+  const respond = (body) => {
+    res.writeHead(200, { "Content-Type": asset.type });
+    res.end(body);
+  };
+
+  if (fs.existsSync(plainPath)) {
+    fs.readFile(plainPath, (err, data) => {
+      if (err) {
+        res.writeHead(500);
+        res.end("Failed to read asset");
+        return;
+      }
+      respond(data);
+    });
+    return true;
+  }
+
+  if (fs.existsSync(gzPath)) {
+    fs.readFile(gzPath, (err, data) => {
+      if (err) {
+        res.writeHead(500);
+        res.end("Failed to read asset");
+        return;
+      }
+      zlib.gunzip(data, (gunzipErr, body) => {
+        if (gunzipErr) {
+          res.writeHead(500);
+          res.end("Failed to decompress asset");
+          return;
+        }
+        respond(body);
+      });
+    });
+    return true;
+  }
+
+  res.writeHead(404);
+  res.end("Not found");
+  return true;
 }
 
 const server = http.createServer((req, res) => {
   let urlPath = decodeURIComponent(req.url.split("?")[0]);
   if (urlPath === "/") urlPath = "/index.html";
 
-  const gzPath = GZIP_ALIASES[urlPath];
-  const diskPath = resolvePath(gzPath || urlPath);
+  if (serveUnityAsset(urlPath, res)) return;
 
+  const diskPath = resolvePath(urlPath);
   if (!diskPath.startsWith(ROOT)) {
     res.writeHead(403);
     res.end("Forbidden");
@@ -56,24 +114,8 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    const respond = (body) => {
-      res.writeHead(200, { "Content-Type": contentType(urlPath) });
-      res.end(body);
-    };
-
-    if (gzPath) {
-      zlib.gunzip(data, (gunzipErr, body) => {
-        if (gunzipErr) {
-          res.writeHead(500);
-          res.end("Failed to decompress asset");
-          return;
-        }
-        respond(body);
-      });
-      return;
-    }
-
-    respond(data);
+    res.writeHead(200, { "Content-Type": contentType(urlPath) });
+    res.end(data);
   });
 });
 
