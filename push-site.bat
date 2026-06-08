@@ -38,9 +38,9 @@ REM    when git prompts. Or clone via SSH with their own SSH key on GitHub.
 REM
 REM  LIVE SITE
 REM    Pushes go to branch "main". Cloudflare rebuilds from that repo.
-REM    Unity WebGL uses gzip (.gz) build files. wrangler.jsonc + worker.js set
-REM    Content-Encoding: gzip on deploy. Keep deploy command: npx wrangler deploy
-REM    If the demo fails online, check Cloudflare build logs for worker.js errors.
+REM    Unity WebGL: after copying a new build into demo/, push-site.bat runs
+REM    patch-demo.bat automatically. Gzip build + worker.js serves online.
+REM    Deploy command must stay: npx wrangler deploy
 REM =============================================================================
 setlocal
 cd /d "%~dp0"
@@ -74,6 +74,13 @@ echo.
 echo  LIVE: branch main - Cloudflare Pages rebuilds after a successful push.
 echo ===============================================================================
 echo.
+
+call "%~dp0patch-demo.bat"
+if errorlevel 1 (
+  echo patch-demo.bat failed - fix errors above before pushing.
+  pause
+  exit /b 1
+)
 
 git add -A
 git diff --cached --quiet

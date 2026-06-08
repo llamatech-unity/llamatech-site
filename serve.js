@@ -24,11 +24,16 @@ const MIME = {
   ".data": "application/octet-stream",
 };
 
-function contentType(filePath) {
-  if (filePath.endsWith(".framework.js")) return "application/javascript";
-  if (filePath.endsWith(".wasm")) return "application/wasm";
-  if (filePath.endsWith(".data")) return "application/octet-stream";
-  return MIME[path.extname(filePath)] || "application/octet-stream";
+function contentType(requestPath) {
+  if (requestPath.endsWith(".framework.js")) return "application/javascript";
+  if (requestPath.endsWith(".wasm")) return "application/wasm";
+  if (requestPath.endsWith(".data")) return "application/octet-stream";
+  return MIME[path.extname(requestPath)] || "application/octet-stream";
+}
+
+function resolvePath(urlPath) {
+  const relative = urlPath.replace(/^\/+/, "");
+  return path.normalize(path.join(ROOT, relative));
 }
 
 const server = http.createServer((req, res) => {
@@ -36,15 +41,15 @@ const server = http.createServer((req, res) => {
   if (urlPath === "/") urlPath = "/index.html";
 
   const gzPath = GZIP_ALIASES[urlPath];
-  const filePath = path.normalize(path.join(ROOT, gzPath || urlPath));
+  const diskPath = resolvePath(gzPath || urlPath);
 
-  if (!filePath.startsWith(ROOT)) {
+  if (!diskPath.startsWith(ROOT)) {
     res.writeHead(403);
     res.end("Forbidden");
     return;
   }
 
-  fs.readFile(filePath, (err, data) => {
+  fs.readFile(diskPath, (err, data) => {
     if (err) {
       res.writeHead(404);
       res.end("Not found");
@@ -52,7 +57,7 @@ const server = http.createServer((req, res) => {
     }
 
     const respond = (body) => {
-      res.writeHead(200, { "Content-Type": contentType(gzPath ? urlPath : filePath) });
+      res.writeHead(200, { "Content-Type": contentType(urlPath) });
       res.end(body);
     };
 
