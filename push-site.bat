@@ -37,7 +37,10 @@ REM    on llamatech-site only). They use their GitHub username + that token
 REM    when git prompts. Or clone via SSH with their own SSH key on GitHub.
 REM
 REM  LIVE SITE
-REM    Pushes go to branch "main". Cloudflare Pages rebuilds from that repo.
+REM    Pushes go to branch "main". Cloudflare rebuilds from that repo.
+REM    Unity WebGL uses gzip (.gz) build files. wrangler.jsonc + worker.js set
+REM    Content-Encoding: gzip on deploy. Keep deploy command: npx wrangler deploy
+REM    If the demo fails online, check Cloudflare build logs for worker.js errors.
 REM =============================================================================
 setlocal
 cd /d "%~dp0"

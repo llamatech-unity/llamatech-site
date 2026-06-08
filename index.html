@@ -59,21 +59,12 @@
       <p class="unity-demo-lead">Explore Llamatech vehicles directly in your browser.</p>
     </div>
     <div class="unity-demo-wrap">
-      <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
-        <div id="unity-loading-bar">
-          <div id="unity-logo"></div>
-          <div id="unity-progress-bar-empty">
-            <div id="unity-progress-bar-full"></div>
-          </div>
-        </div>
-        <div id="unity-warning"></div>
-        <div id="unity-footer">
-          <div id="unity-webgl-logo"></div>
-          <div id="unity-fullscreen-button" title="Fullscreen"></div>
-          <div id="unity-build-title">Llamatech</div>
-        </div>
-      </div>
+      <iframe
+        class="unity-iframe"
+        src="demo/index.html"
+        title="Llamatech interactive demo"
+        allowfullscreen
+        loading="lazy"></iframe>
       <div class="unity-vignette" aria-hidden="true"></div>
     </div>
   </section>
@@ -84,74 +75,5 @@
       <a href="mailto:llamatech_unity@outlook.com">llamatech_unity@outlook.com</a>
     </p>
   </footer>
-
-  <script>
-    (function () {
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var warningBanner = document.querySelector("#unity-warning");
-
-      function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? "block" : "none";
-        }
-        var div = document.createElement("div");
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type === "error") {
-          div.style = "background: red; padding: 10px;";
-        } else {
-          if (type === "warning") div.style = "background: yellow; padding: 10px;";
-          setTimeout(function () {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
-
-      var buildUrl = "demo/Build";
-      var loaderUrl = buildUrl + "/demo.loader.js";
-      var config = {
-        dataUrl: buildUrl + "/demo.data.gz",
-        frameworkUrl: buildUrl + "/demo.framework.js.gz",
-        codeUrl: buildUrl + "/demo.wasm.gz",
-        streamingAssetsUrl: "demo/StreamingAssets",
-        companyName: "DefaultCompany",
-        productName: "Llamatech",
-        productVersion: "0.1",
-        showBanner: unityShowBanner,
-      };
-
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        container.className = "unity-mobile";
-        canvas.className = "unity-mobile";
-      } else {
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-      }
-
-      loadingBar.style.display = "block";
-
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = function () {
-        createUnityInstance(canvas, config, function (progress) {
-          progressBarFull.style.width = 100 * progress + "%";
-        }).then(function (unityInstance) {
-          loadingBar.style.display = "none";
-          fullscreenButton.onclick = function () {
-            unityInstance.SetFullscreen(1);
-          };
-        }).catch(function (message) {
-          alert(message);
-        });
-      };
-      document.body.appendChild(script);
-    })();
-  </script>
 </body>
 </html>
