@@ -1,6 +1,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const zlib = require("zlib");
 
 const PORT = 444;
 const ROOT = __dirname;
@@ -17,10 +18,26 @@ const MIME = {
 };
 
 function contentType(filePath) {
-  if (filePath.endsWith(".framework.js.gz")) return "application/javascript";
-  if (filePath.endsWith(".wasm.gz")) return "application/wasm";
-  if (filePath.endsWith(".data.gz")) return "application/octet-stream";
+  if (filePath.endsWith(".framework.js.br") || filePath.endsWith(".framework.js.gz")) {
+    return "application/javascript";
+  }
+  if (filePath.endsWith(".wasm.br") || filePath.endsWith(".wasm.gz")) {
+    return "application/wasm";
+  }
+  if (filePath.endsWith(".data.br") || filePath.endsWith(".data.gz")) {
+    return "application/octet-stream";
+  }
   return MIME[path.extname(filePath)] || "application/octet-stream";
+}
+
+function decompress(filePath, data, callback) {
+  if (filePath.endsWith(".br")) {
+    zlib.brotliDecompress(data, callback);
+  } else if (filePath.endsWith(".gz")) {
+    zlib.gunzip(data, callback);
+  } else {
+    callback(null, data);
+  }
 }
 
 const server = http.createServer((req, res) => {
@@ -41,13 +58,16 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    const headers = { "Content-Type": contentType(filePath) };
-    if (filePath.endsWith(".gz")) {
-      headers["Content-Encoding"] = "gzip";
-    }
+    decompress(filePath, data, (decompressErr, body) => {
+      if (decompressErr) {
+        res.writeHead(500);
+        res.end("Failed to decompress asset");
+        return;
+      }
 
-    res.writeHead(200, headers);
-    res.end(data);
+      res.writeHead(200, { "Content-Type": contentType(filePath) });
+      res.end(body);
+    });
   });
 });
 
